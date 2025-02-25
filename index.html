@@ -3,84 +3,82 @@
 <head>
   <meta charset="UTF-8">
   <title>Currency Converter</title>
-  <!-- Import a modern sans-serif font from Google Fonts -->
+  <!-- Import a modern font -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    /* Reset and base styles */
+    /* Basic reset */
     * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
     }
     body {
-      margin: 0;
-      padding: 0;
       font-family: 'Roboto', sans-serif;
-      background: #f5f5f7;
+      background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      color: #333;
+      height: 100vh;
     }
-    .container {
+    .converter {
       background: #fff;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+      width: 90%;
       max-width: 400px;
-      width: 100%;
       text-align: center;
     }
-    h1 {
-      margin-bottom: 20px;
-      font-weight: 400;
-      font-size: 24px;
+    .converter h1 {
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+      color: #333;
     }
-    label {
+    .converter label {
       display: block;
+      margin-bottom: 0.5rem;
       text-align: left;
-      margin-bottom: 5px;
       font-weight: 500;
+      color: #555;
     }
-    input[type="number"],
-    select {
+    .converter input, .converter select {
       width: 100%;
-      padding: 12px 16px;
-      margin-bottom: 15px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 16px;
-      transition: border-color 0.3s;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: 2px solid #eee;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
     }
-    input[type="number"]:focus,
-    select:focus {
-      border-color: #007aff;
+    .converter input:focus, .converter select:focus {
+      border-color: #66a6ff;
       outline: none;
     }
-    button {
-      background: #007aff;
-      border: none;
-      color: white;
-      padding: 12px 20px;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
+    .converter button {
       width: 100%;
-      transition: background 0.3s ease;
+      padding: 0.75rem;
+      font-size: 1rem;
+      color: #fff;
+      background-color: #66a6ff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
     }
-    button:hover {
-      background: #005bb5;
+    .converter button:hover {
+      background-color: #4a90e2;
     }
     .result {
-      margin-top: 20px;
-      font-size: 18px;
+      margin-top: 1rem;
+      font-size: 1.25rem;
+      color: #333;
       font-weight: 500;
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="converter">
     <h1>Currency Converter</h1>
-    
     <label for="amount">Amount</label>
     <input type="number" id="amount" placeholder="Enter amount" />
     
@@ -98,4 +96,50 @@
       <option value="USD">USD</option>
       <option value="GBP">GBP</option>
       <!-- Add additional currencies as needed -->
-    </s
+    </select>
+    
+    <button id="convertBtn">Convert</button>
+    <div class="result" id="result"></div>
+  </div>
+  
+  <script>
+    // Your FreeCurrencyAPI key
+    const API_KEY = 'fca_live_Mg0CVi7KqaOrexre7YheIZFuqk3hp80TEHV5zm8T';
+
+    document.getElementById('convertBtn').addEventListener('click', function() {
+      const amount = parseFloat(document.getElementById('amount').value);
+      const fromCurrency = document.getElementById('fromCurrency').value;
+      const toCurrency = document.getElementById('toCurrency').value;
+      const resultDiv = document.getElementById('result');
+
+      if (isNaN(amount) || amount <= 0) {
+        resultDiv.textContent = 'Please enter a valid amount.';
+        return;
+      }
+      
+      // Build the API URL without extra parameters to avoid 404 errors.
+      const url = `https://api.freecurrencyapi.com/v1/latest?apikey=${API_KEY}`;
+      
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          if (data.data) {
+            const rate = data.data[toCurrency];
+            if (rate) {
+              const convertedAmount = amount * rate;
+              resultDiv.textContent = `${amount} ${fromCurrency} = ${convertedAmount.toFixed(2)} ${toCurrency}`;
+            } else {
+              resultDiv.textContent = 'Target currency not found in API response.';
+            }
+          } else {
+            resultDiv.textContent = 'Error: No data received from API.';
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching exchange rate:', error);
+          resultDiv.textContent = 'Error fetching exchange rate data.';
+        });
+    });
+  </script>
+</body>
+</html>
