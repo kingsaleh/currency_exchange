@@ -14,7 +14,7 @@
     }
     body {
       font-family: 'Roboto', sans-serif;
-      background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+      background: #ffffff; /* White background */
       display: flex;
       justify-content: center;
       align-items: center;
@@ -46,4 +46,118 @@
       padding: 0.75rem;
       margin-bottom: 1rem;
       border: 2px solid #eee;
-      border-radius: 10px
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+    .converter input:focus, .converter select:focus {
+      border-color: #66a6ff;
+      outline: none;
+    }
+    .converter button {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      color: #fff;
+      background-color: #66a6ff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .converter button:hover {
+      background-color: #4a90e2;
+    }
+    .result {
+      margin-top: 1rem;
+      font-size: 1.25rem;
+      color: #333;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="converter">
+    <h1>Currency Converter</h1>
+    <!-- Form to capture Enter key submissions -->
+    <form id="converterForm">
+      <label for="amount">Amount</label>
+      <input type="number" id="amount" placeholder="Enter amount" required />
+
+      <label for="fromCurrency">From</label>
+      <select id="fromCurrency">
+        <option value="USD">USD</option>
+        <option value="EUR">EUR</option>
+        <option value="GBP">GBP</option>
+      </select>
+
+      <label for="toCurrency">To</label>
+      <select id="toCurrency">
+        <option value="EUR">EUR</option>
+        <option value="USD">USD</option>
+        <option value="GBP">GBP</option>
+      </select>
+
+      <button type="submit" id="convertBtn">Convert</button>
+    </form>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    // Your FreeCurrencyAPI key
+    const API_KEY = 'fca_live_Mg0CVi7KqaOrexre7YheIZFuqk3hp80TEHV5zm8T';
+
+    // Function to handle the conversion logic
+    function convertCurrency() {
+      const amount = parseFloat(document.getElementById('amount').value);
+      const fromCurrency = document.getElementById('fromCurrency').value;
+      const toCurrency = document.getElementById('toCurrency').value;
+      const resultDiv = document.getElementById('result');
+
+      if (isNaN(amount) || amount <= 0) {
+        resultDiv.textContent = 'Please enter a valid amount.';
+        return;
+      }
+
+      // Build the API URL (without extra parameters to avoid 404 errors)
+      const url = `https://api.freecurrencyapi.com/v1/latest?apikey=${API_KEY}`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          if (data.data) {
+            const rate = data.data[toCurrency];
+            if (rate) {
+              const convertedAmount = amount * rate;
+              resultDiv.textContent = `${amount} ${fromCurrency} = ${convertedAmount.toFixed(2)} ${toCurrency}`;
+            } else {
+              resultDiv.textContent = 'Target currency not found in API response.';
+            }
+          } else {
+            resultDiv.textContent = 'Error: No data received from API.';
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching exchange rate:', error);
+          resultDiv.textContent = 'Error fetching exchange rate data.';
+        });
+    }
+
+    // Listen for form submission (button click or Enter key)
+    document.getElementById('converterForm').addEventListener('submit', function(e) {
+      e.preventDefault(); // Prevent default form submission behavior
+      convertCurrency();
+    });
+
+    // Optionally, ensure that pressing Enter on any input also triggers the conversion:
+    document.querySelectorAll('#converterForm input').forEach(input => {
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          convertCurrency();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
