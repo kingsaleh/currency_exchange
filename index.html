@@ -33,7 +33,7 @@
     <option value="USD">USD</option>
     <option value="EUR">EUR</option>
     <option value="GBP">GBP</option>
-    <!-- Add additional currencies as needed -->
+    <!-- Add more currencies as needed -->
   </select>
 
   <br/>
@@ -43,7 +43,7 @@
     <option value="EUR">EUR</option>
     <option value="USD">USD</option>
     <option value="GBP">GBP</option>
-    <!-- Add additional currencies as needed -->
+    <!-- Add more currencies as needed -->
   </select>
 
   <br/>
@@ -53,48 +53,40 @@
   <div class="result" id="result"></div>
 
   <script>
-    // Replace with your actual API key.
+    // Insert your actual API key from FreeCurrencyAPI here
     const API_KEY = 'fca_live_Mg0CVi7KqaOrexre7YheIZFuqk3hp80TEHV5zm8T';
 
-    // Add an event listener to the Convert button.
     document.getElementById('convertBtn').addEventListener('click', function() {
       const amount = parseFloat(document.getElementById('amount').value);
       const fromCurrency = document.getElementById('fromCurrency').value;
       const toCurrency = document.getElementById('toCurrency').value;
       const resultDiv = document.getElementById('result');
-      
-      // Validate that the user has entered a valid amount.
-      if (isNaN(amount)) {
+
+      console.log("Convert button clicked.");
+      console.log("Amount:", amount, "From:", fromCurrency, "To:", toCurrency);
+
+      // Validate the amount
+      if (isNaN(amount) || amount <= 0) {
         resultDiv.textContent = 'Please enter a valid amount.';
         return;
       }
-      
-      // Construct the API URL.
-      // For example, if using ExchangeRate-API, the endpoint is:
-      // https://v6.exchangerate-api.com/v6/YOUR_API_KEY/latest/USD
-      // where "USD" will be replaced with the fromCurrency.
-      const url = `https://api.freecurrencyapi.com/v1/latest?apikey=${fca_live_Mg0CVi7KqaOrexre7YheIZFuqk3hp80TEHV5zm8T}&base_currency=${fromCurrency}`;
-;
-      
-      // Fetch live currency rates from the API.
+
+      // Construct the API URL using FreeCurrencyAPI's endpoint.
+      const url = `https://api.freecurrencyapi.com/v1/latest?apikey=${API_KEY}&base_currency=${fromCurrency}`;
+      console.log("Request URL:", url);
+
+      // Fetch live currency rates from FreeCurrencyAPI.
       fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          // Check if the API call was successful.
-          if (data.result === "success") {
-            const rate = data.conversion_rates[toCurrency];
-            // Calculate the converted amount.
-            const convertedAmount = amount * rate;
-            resultDiv.textContent = `${amount} ${fromCurrency} = ${convertedAmount.toFixed(2)} ${toCurrency}`;
-          } else {
-            resultDiv.textContent = 'Error retrieving exchange rate data.';
-          }
+        .then(response => {
+          console.log("Response status:", response.status);
+          return response.json();
         })
-        .catch(error => {
-          console.error('Error fetching exchange rate:', error);
-          resultDiv.textContent = 'Error fetching exchange rate data.';
-        });
-    });
-  </script>
-</body>
-</html>
+        .then(data => {
+          console.log("API Response:", data); // Log full API response for debugging
+
+          // Check if the response has the expected 'data' property.
+          if (data.data) {
+            const rate = data.data[toCurrency];
+            if (rate) {
+              const convertedAmount = amount * rate;
+              re
