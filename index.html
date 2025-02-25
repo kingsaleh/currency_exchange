@@ -73,7 +73,8 @@
       // For example, if using ExchangeRate-API, the endpoint is:
       // https://v6.exchangerate-api.com/v6/YOUR_API_KEY/latest/USD
       // where "USD" will be replaced with the fromCurrency.
-      const url = `https://api.freecurrencyapi.com/v1/latest?apikey=fca_live_Mg0CVi7KqaOrexre7YheIZFuqk3hp80TEHV5zm8T/${fromCurrency}`;
+      const url = `https://api.freecurrencyapi.com/v1/latest?apikey=${fca_live_Mg0CVi7KqaOrexre7YheIZFuqk3hp80TEHV5zm8T}&base_currency=${fromCurrency}`;
+;
       
       // Fetch live currency rates from the API.
       fetch(url)
