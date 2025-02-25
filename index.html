@@ -53,16 +53,19 @@
   <div class="result" id="result"></div>
 
   <script>
-    // Insert your actual API key from FreeCurrencyAPI here
+    // API key from your FreeCurrencyAPI account
     const API_KEY = 'fca_live_Mg0CVi7KqaOrexre7YheIZFuqk3hp80TEHV5zm8T';
 
+    // Debug: Confirm that the script is loaded
+    console.log("Script loaded.");
+
     document.getElementById('convertBtn').addEventListener('click', function() {
+      console.log("Convert button clicked.");
       const amount = parseFloat(document.getElementById('amount').value);
       const fromCurrency = document.getElementById('fromCurrency').value;
       const toCurrency = document.getElementById('toCurrency').value;
       const resultDiv = document.getElementById('result');
 
-      console.log("Convert button clicked.");
       console.log("Amount:", amount, "From:", fromCurrency, "To:", toCurrency);
 
       // Validate the amount
@@ -71,11 +74,11 @@
         return;
       }
 
-      // Construct the API URL using FreeCurrencyAPI's endpoint.
+      // Build the API URL using FreeCurrencyAPI's endpoint
       const url = `https://api.freecurrencyapi.com/v1/latest?apikey=${API_KEY}&base_currency=${fromCurrency}`;
       console.log("Request URL:", url);
 
-      // Fetch live currency rates from FreeCurrencyAPI.
+      // Fetch live currency rates from FreeCurrencyAPI
       fetch(url)
         .then(response => {
           console.log("Response status:", response.status);
@@ -84,9 +87,26 @@
         .then(data => {
           console.log("API Response:", data); // Log full API response for debugging
 
-          // Check if the response has the expected 'data' property.
+          // Check if the response contains the expected 'data' property.
           if (data.data) {
             const rate = data.data[toCurrency];
             if (rate) {
               const convertedAmount = amount * rate;
-              re
+              resultDiv.textContent = `${amount} ${fromCurrency} = ${convertedAmount.toFixed(2)} ${toCurrency}`;
+            } else {
+              resultDiv.textContent = 'Target currency not found in API response.';
+              console.error("Target currency rate not found. Response data:", data.data);
+            }
+          } else {
+            resultDiv.textContent = 'Error: No data received from API.';
+            console.error("No data property in API response:", data);
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching exchange rate:', error);
+          resultDiv.textContent = 'Error fetching exchange rate data.';
+        });
+    });
+  </script>
+</body>
+</html>
