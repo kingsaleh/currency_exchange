@@ -14,14 +14,14 @@
     }
     body {
       font-family: 'Roboto', sans-serif;
-      background: #ffffff; /* White background */
+      background: #ffffff; /* Force white background */
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
     }
     .converter {
-      background: #fff;
+      background: #ffffff;
       padding: 2rem;
       border-radius: 20px;
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
@@ -107,7 +107,6 @@
     // Your FreeCurrencyAPI key
     const API_KEY = 'fca_live_Mg0CVi7KqaOrexre7YheIZFuqk3hp80TEHV5zm8T';
 
-    // Function to handle the conversion logic
     function convertCurrency() {
       const amount = parseFloat(document.getElementById('amount').value);
       const fromCurrency = document.getElementById('fromCurrency').value;
@@ -145,11 +144,11 @@
 
     // Listen for form submission (button click or Enter key)
     document.getElementById('converterForm').addEventListener('submit', function(e) {
-      e.preventDefault(); // Prevent default form submission behavior
+      e.preventDefault();
       convertCurrency();
     });
 
-    // Optionally, ensure that pressing Enter on any input also triggers the conversion:
+    // Also listen for Enter on input fields (if needed)
     document.querySelectorAll('#converterForm input').forEach(input => {
       input.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
