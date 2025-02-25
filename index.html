@@ -61,6 +61,7 @@
 
     document.getElementById('convertBtn').addEventListener('click', function() {
       console.log("Convert button clicked.");
+      
       const amount = parseFloat(document.getElementById('amount').value);
       const fromCurrency = document.getElementById('fromCurrency').value;
       const toCurrency = document.getElementById('toCurrency').value;
@@ -74,11 +75,11 @@
         return;
       }
 
-      // Build the API URL using FreeCurrencyAPI's endpoint
-      const url = `https://api.freecurrencyapi.com/v1/latest?apikey=${API_KEY}&base_currency=${fromCurrency}`;
+      // For troubleshooting, remove the extra base_currency parameter:
+      const url = `https://api.freecurrencyapi.com/v1/latest?apikey=${API_KEY}`;
       console.log("Request URL:", url);
 
-      // Fetch live currency rates from FreeCurrencyAPI
+      // Fetch live currency rates from FreeCurrencyAPI.
       fetch(url)
         .then(response => {
           console.log("Response status:", response.status);
@@ -89,8 +90,12 @@
 
           // Check if the response contains the expected 'data' property.
           if (data.data) {
+            // Note: Without a custom base currency, rates will be relative to the API's default base (usually USD)
             const rate = data.data[toCurrency];
             if (rate) {
+              // If you want to support conversions from a different "from" currency,
+              // you might need to do additional calculations.
+              // For now, we'll assume the API's default base currency is used.
               const convertedAmount = amount * rate;
               resultDiv.textContent = `${amount} ${fromCurrency} = ${convertedAmount.toFixed(2)} ${toCurrency}`;
             } else {
